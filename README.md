@@ -1,5 +1,5 @@
 # easyhttps
-A golang package for easy integration of https into existing http servers
+A golang package for easy integration of https (using TLS) into existing http servers
 
 ### Usage:
 
