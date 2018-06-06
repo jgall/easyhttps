@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -67,6 +68,10 @@ func (s *HTTPSServer) InitAutocert() *autocert.Manager {
 			return nil
 		}
 		return fmt.Errorf("acme/autocert: only %s host is allowed", s.AllowedHost)
+	}
+	if err := os.MkdirAll(s.TLSDataDir, 0700); err != nil {
+		log.Printf("warning: autocert.NewListener not using a cache: %v", err)
+		return nil
 	}
 	m := &autocert.Manager{
 		Prompt:     autocert.AcceptTOS,

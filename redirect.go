@@ -14,15 +14,13 @@ func makeHTTPToHTTPSRedirectMux(m *autocert.Manager) http.HandlerFunc {
 		newURI := "https://" + r.Host + r.URL.String()
 		http.Redirect(w, r, newURI, http.StatusFound)
 	}
-	mux := &http.ServeMux{}
-	mux.HandleFunc("/", handleRedirect)
-	callbackHandler := m.HTTPHandler(mux)
+	callbackHandler := m.HTTPHandler(nil)
 	return func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/.well-known/acme-challenge/") {
 			callbackHandler.ServeHTTP(w, r)
 			hasHTTPS = true
 		} else if hasHTTPS {
-			callbackHandler.ServeHTTP(w, r)
+			handleRedirect(w, r)
 		} else {
 			fmt.Fprint(w, "Waiting on TLS Certificate")
 		}
